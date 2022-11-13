@@ -37,14 +37,45 @@ def find_index_post(id):
             return idx
     return -1
 
-@app.get("/"):
+@app.get("/")
 def hello():
     return {"message" :"This is my forst app"}
 
 @app.get("/posts")
 def get_posts():
     return {"data":my_posts}
-    pass
+
+@app.post("/posts",status_code = status.HTTP_201_CREATED)
+def create_posts(post : Post):
+    post_dict = post.dict()
+    post_dict["id"] = randrange(0,999999)
+    my_posts.append(post_dict)
+    return {"data" : post_dict}
+
+@app.get("/posts/{post_id}")
+def get_post(post_id : int, response : Response):
+    post = find_post(int(post_id))
+    if not post:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"post with id : {post_id} does not exist.")
+        # response.status_code = status.HTTP_404_NOT_FOUND
+        # return {"message" : f"post with id : {post_id} does not exist."}
+    print(post)
+
+    return {"post detail ":post}
+
+@app.delete("/posts/{post_id}",status_code = status.HTTP_204_NO_CONTENT)
+def delete_post(post_id : int):
+    idx = find_index_post(int(post_id))
+    if idx == -1:
+        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND,
+                            detail = f"The post with id : {post_id} does not exist")
+    else:
+        my_posts.pop(idx)
+
+    return Response(status_code = status.HTTP_204_NO_CONTENT)
+
+
 
 
 
