@@ -39,7 +39,7 @@ def find_index_post(id):
 
 @app.get("/")
 def hello():
-    return {"message" :"This is my forst app"}
+    return {"message" :"This is my first app"}
 
 @app.get("/posts")
 def get_posts():
@@ -76,7 +76,19 @@ def delete_post(post_id : int):
     return Response(status_code = status.HTTP_204_NO_CONTENT)
 
 
+@app.put("/posts/{post_id}")
+def update_post(post_id:int, post:Post):
 
+    idx = find_index_post(int(post_id))
+    if idx == -1:
+        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND,
+                            detail = f"The post with id : {post_id} does not exist")
+    post_dict = post.dict()
+    post_dict["id"] = post_id
+    my_posts[idx] = post_dict
+
+    return {"message" : "New post successfully added",
+            "data" : post_dict}
 
 
 
