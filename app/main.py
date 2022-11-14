@@ -89,6 +89,3 @@ def update_post(post_id:int, post:Post):
 
     return {"message" : "New post successfully added",
             "data" : post_dict}
-
-
-
